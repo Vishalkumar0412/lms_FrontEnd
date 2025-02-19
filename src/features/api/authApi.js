@@ -39,4 +39,4 @@ export const authApi = createApi({
 });
 
 // Export hooks for usage in functional components
-export const { useRegisterUserMutation, useLoginUserMutation, } = authApi;
+export const { useRegisterUserMutation, useLoginUserMutation } = authApi;

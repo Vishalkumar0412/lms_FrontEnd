@@ -7,13 +7,14 @@ import { appStore } from './app/store'
 import { Toaster } from './components/ui/sonner'
 import { BrowserRouter } from 'react-router'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={appStore}>
-     
-    <App />
+   
+     <App />
     <Toaster />
-
-    </Provider>
+   
+</Provider>
   </StrictMode>,
 )
