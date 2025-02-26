@@ -1,5 +1,5 @@
 import { LogOutIcon, Menu, School } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,11 +21,27 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLogoutUserMutation } from '@/features/api/authApi';
+import { toast } from 'sonner';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
-    const user = true; // Simulating login state
+    const { user } = useSelector((appStore) => appStore.auth); //Simulating login state
 
+
+    console.log("user mil gaya",user)
+    const Navigate=useNavigate()
+    const [logoutUser,{data,isSuccess}]=useLogoutUserMutation()
+    const logoutHandler=async ()=>{
+        await logoutUser()
+    }
+useEffect(()=>{
+    if(isSuccess){
+        toast.success(data.message || "User Log Out")
+        Navigate("/login")
+    }
+},[isSuccess])
     return (
         <div className='h-16 dark:bg-[#0A0A0A] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed left-0 top-0 right-0 duration-300 z-10'>
             {/* Desktop Navbar */}
@@ -41,7 +57,7 @@ const Navbar = () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="cursor-pointer h-8 w-8">
-                                    <AvatarImage src="https://github.com/shadcn.png" className='rounded-full' />
+                                    <AvatarImage src={user.photoUrl ||"https://github.com/shadcn.png"} className='rounded-full' />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
@@ -55,21 +71,27 @@ const Navbar = () => {
                                     <DropdownMenuItem asChild>
                                         <Link to='/Profile'>Profile</Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <LogOutIcon className="mr-2 h-4 w-4" />
+                                    <DropdownMenuItem onClick={logoutHandler}>
+                                        <LogOutIcon  className="mr-2 h-4 w-4" />
                                         <span>Log out</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
+                               {
+                                user.role=="intructor" && ( 
+                                <>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <span>Dashboard</span>
-                                </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <span>Dashboard</span>
+                                    </DropdownMenuItem>
+                                    </>)
+                                    
+                               }
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
                         <div className="flex gap-2">
-                            <Button variant="outline">Login</Button>
-                            <Button>Signup</Button>
+                            <Button variant="outline" onClick={()=>Navigate("/login")}>Login</Button>
+                            <Button onClick={()=>Navigate("/login")}>Signup</Button>
                         </div>
                     )}
 
